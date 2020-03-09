@@ -1,4 +1,4 @@
-Title: French Immersion in the City of Vancouver
+Title: French Immersion programs in the City of Vancouver
 
 Here is my screenshot :
 
