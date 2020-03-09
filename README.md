@@ -16,7 +16,7 @@ I did ask Vicky for some feedback on my map. Here is what she had to say:
 
 “I like everything but I think that you could change the symbol of the schools to be more representative. Additionally, the 360 is cool, but I think that he might not love it because it doesn't really benefit your map.”
 
-I have included these changes on my final map. After Vicky’s feedback, I have learned that I need to create a map that is useful for the user and creating a map that circles around a point is not useful nor easily navigatable. 
+I have included these changes on my final map. After Vicky’s feedback, I have learned that I need to create a map that is useful for the user. Creating a map that circles around a point is not useful nor easily navigatable. 
 
 I also reached out to Katherine Song so that I can create a filter. I tried to create a layer for elementary schools and one layer for high schools. I was unable to complete this either since I was unable to upload my point data for my schools to mapbox and create a url similar to this: mapbox://styles/mapbox/XXXXXXXXX.
 
