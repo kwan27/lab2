@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Filter symbols by text input</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<style>
+		.filter-ctrl {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			z-index: 1;
+		}
+
+		.filter-ctrl input[type='text'] {
+			font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+			width: 100%;
+			border: 0;
+			background-color: #fff;
+			margin: 0;
+			color: rgba(0, 0, 0, 0.5);
+			padding: 10px;
+			box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+			border-radius: 3px;
+			width: 180px;
+		}
+	</style>
+	<div id="map"></div>
+	<div class="filter-ctrl">
+		<input id="filter-input" type="text" name="filter" placeholder="Filter by name" />
+	</div>
+
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1IjoiaGVucnktOSIsImEiOiJjazY4eXp6MjYwYWQxM21xanhnOThtY2lkIn0.bf_RaoOUhaoDTJFhjPHpiQ';
+		var places = {
+			"type": "FeatureCollection",
+			"features": [{
+					"type": "Feature",
+					"properties": {
+						"description": "Ecole Jules Quesnel Elementary",
+						"icon": "school"
+					},
+					"geometry": {
+						"type": "Point",
+						'coordinates': [-123.1925381, 49.25956781]
+					}
+				},
+				{
+						"type": "Feature",
+						"properties": {
+							"description": "Kerrisdale Annex",
+							"icon": "school"
+						},
+						"geometry": {
+							"type": "Point",
+							'coordinates': [-123.177405, 49.232868]
+						}
+					},
+					{
+							"type": "Feature",
+							"properties": {
+								"description": "Sir Winston Churchill Secondary",
+								"icon": "school"
+							},
+							"geometry": {
+								"type": "Point",
+								'coordinates': [-123.1256155, 49.22105957]
+							}
+						},
+						{
+								"type": "Feature",
+								"properties": {
+									"description": "Vancouver Technical Secondary",
+									"icon": "school"
+								},
+								"geometry": {
+									"type": "Point",
+									'coordinates': [-123.0512998, 49.26075548]
+								}
+							},
+							{
+									"type": "Feature",
+									"properties": {
+										"description": "Hastings Community Elementary",
+										"icon": "school"
+									},
+									"geometry": {
+										"type": "Point",
+										'coordinates': [-123.0505774, 49.28261096]
+									}
+								},
+								{
+										"type": "Feature",
+										"properties": {
+											"description": "Henry Hudson Elementary",
+											"icon": "school"
+										},
+										"geometry": {
+											"type": "Point",
+											'coordinates': [-123.1493563, 49.27224588]
+										}
+									},
+									{
+											"type": "Feature",
+											"properties": {
+												"description": "L'Ecole Bilingue Elementary",
+												"icon": "school"
+											},
+											"geometry": {
+												"type": "Point",
+												'coordinates': [-123.1303864, 49.25808403]
+											}
+										},
+										{
+												"type": "Feature",
+												"properties": {
+													"description": "Laura Secord Elementary",
+													"icon": "school"
+												},
+												"geometry": {
+													"type": "Point",
+													'coordinates': [-123.0602234, 49.2617357]
+												}
+											},
+											{
+													"type": "Feature",
+													"properties": {
+														"description": "Lord Selkirk Elementaryy",
+														"icon": "school"
+													},
+													"geometry": {
+														"type": "Point",
+														'coordinates': [-123.0690071, 49.24969195]
+													}
+												},
+												{
+														"type": "Feature",
+														"properties": {
+															"description": "Lord Strathcona Community Elementary",
+															"icon": "school"
+														},
+														"geometry": {
+															"type": "Point",
+															'coordinates': [-123.0914768, 49.27981152]
+														}
+													},
+													{
+															"type": "Feature",
+															"properties": {
+																"description": "Lord Tennyson Elementary",
+																"icon": "school"
+															},
+															"geometry": {
+																"type": "Point",
+																'coordinates': [-123.1493771, 49.26251894]
+															}
+														},
+														{
+																"type": "Feature",
+																"properties": {
+																	"description": "Quilchena Elementary",
+																	"icon": "school"
+																},
+																"geometry": {
+																	"type": "Point",
+																	'coordinates': [-123.1515708, 49.23724621]
+																}
+															},
+															{
+																	"type": "Feature",
+																	"properties": {
+																		"description": "Sir James Douglas Elementary",
+																		"icon": "school"
+																	},
+																	"geometry": {
+																		"type": "Point",
+																		'coordinates': [-123.0646532, 49.21604933]
+																	}
+																},
+																{
+																		"type": "Feature",
+																		"properties": {
+																			"description": "Trafalgar Elementary",
+																			"icon": "school"
+																		},
+																		"geometry": {
+																			"type": "Point",
+																			'coordinates': [-123.1646061, 49.25017876]
+																		}
+																	},
+			]
+		};
+
+		//            {
+		//                'type': 'Feature',
+		//                'properties': {
+		//                    'icon': 'music'
+		//                },
+		//                'geometry': {
+		//                    'type': 'Point',
+		//                    'coordinates': [-77.007481, 38.876516]
+		//                }
+		//            }
+		//        ]
+		//    };
+
+		var layerIDs = []; // Will contain a list used to filter against.
+		var filterInput = document.getElementById('filter-input');
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/henry-9/ck7ejq86o0iui1ioasg2jnjnc',
+      center: [-123.113, 49.249],
+      zoom: 11.5,
+      pitch: 45
+		});
+
+		function rotateCamera(timestamp) {
+// clamp the rotation between 0 -360 degrees
+// Divide timestamp by 100 to slow rotation to ~10 degrees / sec
+map.rotateTo((timestamp / 100) % 360, { duration: 0 });
+// Request the next frame of the animation.
+requestAnimationFrame(rotateCamera);
+}
+
+map.on('load', function() {
+// Start the animation.
+rotateCamera(0);
+
+// Add 3d buildings and remove label layers to enhance the map
+var layers = map.getStyle().layers;
+for (var i = 0; i < layers.length; i++) {
+if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+// remove text labels
+map.removeLayer(layers[i].id);
+}
+}
+
+map.addLayer({
+'id': '3d-buildings',
+'source': 'composite',
+'source-layer': 'building',
+'filter': ['==', 'extrude', 'true'],
+'type': 'fill-extrusion',
+'minzoom': 15,
+'paint': {
+'fill-extrusion-color': '#aaa',
+
+// use an 'interpolate' expression to add a smooth transition effect to the
+// buildings as the user zooms in
+'fill-extrusion-height': [
+'interpolate',
+['linear'],
+['zoom'],
+15,
+0,
+15.05,
+['get', 'height']
+],
+'fill-extrusion-base': [
+'interpolate',
+['linear'],
+['zoom'],
+15,
+0,
+15.05,
+['get', 'min_height']
+],
+'fill-extrusion-opacity': 0.6
+}
+});
+});
+
+		map.on('load', function() {
+			// Add a GeoJSON source containing place coordinates and information.
+			map.addSource('places', {
+				'type': 'geojson',
+				'data': places
+			});
+
+			places.features.forEach(function(feature) {
+				var symbol = feature.properties['description'];
+				var layerID = 'poi-' + symbol;
+				var marker = feature.properties['marker-symbol'];
+				var color = feature.properties['marker-color']
+
+
+				// Add a layer for this symbol type if it hasn't been added already.
+				if (!map.getLayer(layerID)) {
+					map.addLayer({
+						'id': layerID,
+						'type': 'symbol',
+						'source': 'places',
+						'layout': {
+							'icon-image': marker + '-15',
+							'icon-allow-overlap': true,
+							'text-field': symbol,
+							'text-font': [
+								'Open Sans Bold',
+								'Arial Unicode MS Bold'
+							],
+							'text-size': 11,
+							'text-transform': 'uppercase',
+							'text-letter-spacing': 0.05,
+							'text-offset': [0, 1.5]
+						},
+						'paint': {
+							'text-color': '#202',
+							'text-halo-color': '#fff',
+							'text-halo-width': 2
+
+						},
+						'filter': ['==', 'description', symbol]
+					});
+
+					layerIDs.push(layerID);
+				}
+			});
+
+			filterInput.addEventListener('keyup', function(e) {
+				// If the input value matches a layerID set
+				// it's visibility to 'visible' or else hide it.
+				var value = e.target.value.trim().toLowerCase();
+				layerIDs.forEach(function(layerID) {
+					map.setLayoutProperty(
+						layerID,
+						'visibility',
+						layerID.indexOf(value) > -1 ? 'visible' : 'none'
+					);
+				});
+			});
+		});
+	</script>
+
+</body>
+
+</html>
