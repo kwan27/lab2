@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>French Immersion Schools</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+<style>
+
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3 {
+  margin: 10px;
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+p {
+  font-size: 0.85em;
+  margin: 10px;
+  text-align: left;
+}
+
+/**
+* Create a position for the map
+* on the page */
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/**
+* Set rules for how the map overlays
+* (information box ) will be displayed
+* on the page. */
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+#features {
+  top: 0;
+  height: 170px;
+  margin-top: 20px;
+  width: 250px;
+};
+
+.mapboxgl-popup {
+max-width: 400px;
+font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div class='map-overlay' id='features'><h2>French Immersion in the City of Vancouver </h2><div id='pd'><p>Three elementary schools and 13 high schools offer the French Immersion program in Vancouver.</p> <p>Click on the website to learn more</p></div></div>
+<div class='map-overlay' id='legend'></div>
+<div class='map-overlay' id='legend'></div>
+
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1IjoiaGVucnktOSIsImEiOiJjazY4eXp6MjYwYWQxM21xanhnOThtY2lkIn0.bf_RaoOUhaoDTJFhjPHpiQ';
+
+
+		var layerIDs = []; // Will contain a list used to filter against.
+		// Setup map with layers uploaded to mapbox
+		var filterInput = document.getElementById('filter-input');
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/henry-9/ck7ejq86o0iui1ioasg2jnjnc',
+      center: [-123.113, 49.249],
+      zoom: 11.5,
+      pitch: 40
+		});
+
+
+// GeoJson data that was retrieved from the city of Vancouver and manupulated through geoJSON.io
+		map.on('load', function() {
+		map.addSource('places', {
+
+		  'type': 'geojson',
+		  'data': {
+		    'type': 'FeatureCollection',
+		    'features': [{
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Ecole Jules Quesnel Elementary</strong> <p>3050 Crown St</p> <a href="https://www.vsb.bc.ca/schools/jules-quesnel/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1925381, 49.25956781]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Hastings Community Elementary</strong><p>2625 Franklin St, Vancouver, BC V5K 3W7</p> <a href="https://www.vsb.bc.ca/schools/hastings/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.0505774, 49.28261096]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Henry Hudson Elementary</strong><p>1551 Cypress St, Vancouver, BC V6J 3L3</p> <a href="https://www.vsb.bc.ca/schools/henry-hudson/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1493563, 49.27224588]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Kerrisdale Annex</strong><p>3250 43 AVE W, Vancouver, BC V6N 4K3</p> <a href="https://www.vsb.bc.ca/schools/kerrisdale-annex/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.177405, 49.232868]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>LEcole Bilingue Elementary</strong><p>1166 W 14th Ave, Vancouver, BC V6H 1P6</p> <a href="https://www.vsb.bc.ca/schools/lecole-bilingue/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1303864, 49.25808403]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Laura Secord Elementary</strong><p>2500 Lakewood Dr, Vancouver, BC V5N 4V1</p> <a href="https://www.vsb.bc.ca/schools/laura-secord/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.0602234, 49.2617357]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Lord Selkirk Elementary</strong><p>1750 E 22nd Ave E, Vancouver, BC V5N 2P7</p> <a href="https://www.vsb.bc.ca/schools/lord-selkirk/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.0690071, 49.24969195]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Lord Strathcona Community Elementary</strong><p>592 E Pender St, Vancouver, BC V6A 1V3</p> <a href="https://www.vsb.bc.ca/schools/lord-strathcona/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.0914768, 49.27981152]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Lord Tennyson Elementary</strong><p>1936 W 10th Ave, Vancouver, BC V6J 2B2</p> <a href="https://www.vsb.bc.ca/schools/lord-tennyson/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1493771, 49.26251894]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Quilchena Elementary</strong><p>5300 Maple St, Vancouver, BC V6M 3T6</p> <a href="https://www.vsb.bc.ca/schools/quilchena/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1515708, 49.23724621]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Sir James Douglas Elementary</strong><p>2150 Brigadoon Av</p> <a href="https://sjd.sd61.bc.ca" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.0646532, 49.21604933]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Sir Winston Churchill Secondary</strong><p>2150 Brigadoon Ave, Vancouver, BC V5P 3Z7</p> <a href="https://www.vsb.bc.ca/schools/sir-winston-churchill/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1256155, 49.22105957]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Trafalgar Elementary</strong><p>4170 Trafalgar St, Vancouver, BC V6L 2M5</p> <a href="https://www.vsb.bc.ca/schools/trafalgar/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.1646061, 49.25017876]
+		        }
+		      },
+		      {
+		        'type': 'Feature',
+		        'properties': {
+		          'description': '<strong>Vancouver Technical Secondary</strong><p>2600 E Broadway, Vancouver, BC V5M 1Y5</p> <a href="https://www.vsb.bc.ca/schools/vancouver-technical/Pages/default.aspx" target="_blank" title="Opens in a new window">School Website</a>',
+		          'icon': 'college'
+		        },
+		        'geometry': {
+		          'type': 'Point',
+		          'coordinates': [-123.0512998, 49.26075548]
+		        }
+		      },
+		    ]
+		  }
+		});
+
+
+		// Add a layer showing the places.
+map.addLayer({
+'id': 'places',
+'type': 'symbol',
+'source': 'places',
+'layout': {
+'icon-image': '{icon}-15',
+'icon-allow-overlap': true
+}
+});
+
+// When a click event occurs on a feature in the places layer, open a popup at the
+// location of the feature, with description HTML from its properties.
+map.on('click', 'places', function(e) {
+var coordinates = e.features[0].geometry.coordinates.slice();
+var description = e.features[0].properties.description;
+
+// Ensure that if the map is zoomed out such that multiple
+// copies of the feature are visible, the popup appears
+// over the copy being pointed to.
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+
+new mapboxgl.Popup()
+.setLngLat(coordinates)
+.setHTML(description)
+.addTo(map);
+});
+
+// Change the cursor to a pointer when the mouse is over the places layer.
+map.on('mouseenter', 'places', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'places', function() {
+map.getCanvas().style.cursor = '';
+});
+});
+
+map.rotateTo(7, { duration: 10000 });
+
+
+
+// The 'building' layer in the mapbox-streets vector source contains building-height
+// data from OpenStreetMap.
+map.on('load', function() {
+// Insert the layer beneath any symbol layer.
+var layers = map.getStyle().layers;
+
+var labelLayerId;
+for (var i = 0; i < layers.length; i++) {
+if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+labelLayerId = layers[i].id;
+break;
+}
+}
+
+map.addLayer(
+{
+'id': '3d-buildings',
+'source': 'composite',
+'source-layer': 'building',
+'filter': ['==', 'extrude', 'true'],
+'type': 'fill-extrusion',
+'minzoom': 15,
+'paint': {
+'fill-extrusion-color': '#aaa',
+
+// use an 'interpolate' expression to add a smooth transition effect to the
+// buildings as the user zooms in
+'fill-extrusion-height': [
+'interpolate',
+['linear'],
+['zoom'],
+15,
+0,
+15.05,
+['get', 'height']
+],
+'fill-extrusion-base': [
+'interpolate',
+['linear'],
+['zoom'],
+15,
+0,
+15.05,
+['get', 'min_height']
+],
+'fill-extrusion-opacity': 0.6
+}
+},
+labelLayerId
+);
+});
+
+
+// Add a layer showing the places.
+map.addLayer({
+	'id': 'places',
+	'type': 'symbol',
+	'source': 'places',
+	'layout': {
+		'icon-image': '{icon}-15',
+		'icon-allow-overlap': true
+	}
+});
+
+// When a click event occurs on a feature in the places layer, open a popup at the
+// location of the feature, with description HTML from its properties.
+map.on('click', 'places', function(e) {
+	var coordinates = e.features[0].geometry.coordinates.slice();
+	var description = e.features[0].properties.description;
+
+	// Ensure that if the map is zoomed out such that multiple
+	// copies of the feature are visible, the popup appears
+	// over the copy being pointed to.
+	while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+		coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+	}
+
+	new mapboxgl.Popup()
+		.setLngLat(coordinates)
+		.setHTML(description)
+		.addTo(map);
+});
+
+// Change the cursor to a pointer when the mouse is over the places layer.
+map.on('mouseenter', 'places', function() {
+	map.getCanvas().style.cursor = 'pointer';
+});
+
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'places', function() {
+	map.getCanvas().style.cursor = '';
+});
+
+
+// When a click event occurs on a feature in the places layer, open a popup at the
+// location of the feature, with description HTML from its properties.
+map.on('click', 'places', function(e) {
+var coordinates = e.features[0].geometry.coordinates.slice();
+var description = e.features[0].properties.description;
+
+// Ensure that if the map is zoomed out such that multiple
+// copies of the feature are visible, the popup appears
+// over the copy being pointed to.
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+	coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+
+new mapboxgl.Popup()
+	.setLngLat(coordinates)
+	.setHTML(description)
+	.addTo(map);
+});
+
+// Change the cursor to a pointer when the mouse is over the places layer.
+map.on('mouseenter', 'places', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'places', function() {
+map.getCanvas().style.cursor = '';
+});
+
+		map.on('load', function() {
+			// Add a GeoJSON source containing place coordinates and information.
+			map.addSource('places', {
+				'type': 'geojson',
+				'data': places
+			});
+// created a filter to search point data by description
+			places.features.forEach(function(feature) {
+				var symbol = feature.properties['description'];
+				var layerID = 'poi-' + symbol;
+				var marker = feature.properties['marker-symbol'];
+				var color = feature.properties['marker-color']
+
+
+				// Add a layer for this symbol type if it hasn't been added already.
+				if (!map.getLayer(layerID)) {
+					map.addLayer({
+						'id': layerID,
+						'type': 'symbol',
+						'source': 'places',
+						'layout': {
+							'icon-image': marker + '-15',
+							'icon-allow-overlap': true,
+							'text-field': symbol,
+							'text-font': [
+								'Open Sans Bold',
+								'Arial Unicode MS Bold'
+							],
+							'text-size': 11,
+							'text-transform': 'uppercase',
+							'text-letter-spacing': 0.05,
+							'text-offset': [0, 1.5]
+						},
+						'paint': {
+							'text-color': '#202',
+							'text-halo-color': '#fff',
+							'text-halo-width': 2
+
+						},
+						'filter': ['==', 'description', symbol]
+					});
+
+					layerIDs.push(layerID);
+				}
+			});
+
+			filterInput.addEventListener('keyup', function(e) {
+				// If the input value matches a layerID set
+				// it's visibility to 'visible' or else hide it.
+				var value = e.target.value.trim().toLowerCase();
+				layerIDs.forEach(function(layerID) {
+					map.setLayoutProperty(
+						layerID,
+						'visibility',
+						layerID.indexOf(value) > -1 ? 'visible' : 'none'
+
+
+					);
+				});
+			});
+		});
+	</script>
+
+</body>
+
+</html>
